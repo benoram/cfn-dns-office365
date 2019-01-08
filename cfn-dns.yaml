@@ -33,7 +33,7 @@ Resources:
   DNSOffice365:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.amazonaws.com/oramco-cfn/oramco/cfn-dns-office365/cfn-dns-orrice365.yaml
+      TemplateURL: https://s3.amazonaws.com/oramco-cfn/oramco/cfn-dns-office365/cfn-dns-office365.yaml
       Parameters:
         DomainName: !Ref DomainName
         ZoneId: !GetAtt DNSZone.Outputs.ZoneId
