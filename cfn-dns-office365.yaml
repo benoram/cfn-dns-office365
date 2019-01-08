@@ -1,0 +1,119 @@
+  AWSTemplateFormatVersion: "2010-09-09"
+  
+  Description: Create DNS records for Office365
+  
+  Parameters:
+    ZoneId: 
+      Type: AWS::Route53::HostedZone::Id
+      Description: Enter a Route 53 ZoneId to add FastMail records to
+  
+    DomainName: 
+      Type: String
+      Description: Enter domain name to use for the DNS records
+      Default: domain.com
+
+    DomainKey:
+      Type: String
+      Description: Your domain-key from the Office365 portal
+      Default: domain-com
+
+  Resources:
+    MXRecord:
+      Type: AWS::Route53::RecordSet
+      Properties:
+        HostedZoneId: !Ref ZoneId
+        Name: !Ref DomainName
+        Type: MX
+        TTL: '300'
+        ResourceRecords:
+        - !Sub '0 ${DomainKey}.mail.protection.outlook.com.'
+
+    SIPFederationSRVRecord:
+      Type: AWS::Route53::RecordSet
+      Properties:
+        HostedZoneId: !Ref ZoneId
+        Name: !Join [ ., [ '_sipfederationtls._tcp', !Ref DomainName]] 
+        Type: SRV
+        TTL: '300'
+        ResourceRecords:
+        - '100 1 5061 sipfed.online.lync.com.'
+
+    SIPSRVRecord:
+      Type: AWS::Route53::RecordSet
+      Properties:
+        HostedZoneId: !Ref ZoneId
+        Name: !Join [ ., [ '_sip._tls', !Ref DomainName]] 
+        Type: SRV
+        TTL: '300'
+        ResourceRecords:
+        - '100 1 443 sipdir.online.lync.com.'
+
+    AutoDiscoverRecord:
+      Type: AWS::Route53::RecordSet
+      Properties:
+        HostedZoneId: !Ref ZoneId
+        Name: !Join [ ., [ 'autodiscover', !Ref DomainName]] 
+        Type: CNAME
+        TTL: '300'
+        ResourceRecords:
+        - 'autodiscover.outlook.com.'
+
+    EnterpriseEnrollmentRecord:
+      Type: AWS::Route53::RecordSet
+      Properties:
+        HostedZoneId: !Ref ZoneId
+        Name: !Join [ ., [ 'enterpriseenrollment', !Ref DomainName]] 
+        Type: CNAME
+        TTL: '300'
+        ResourceRecords:
+        - 'enterpriseenrollment.manage.microsoft.com.'
+
+    EnterpriseRegistrationRecord:
+      Type: AWS::Route53::RecordSet
+      Properties:
+        HostedZoneId: !Ref ZoneId
+        Name: !Join [ ., [ 'enterpriseregistration', !Ref DomainName]] 
+        Type: CNAME
+        TTL: '300'
+        ResourceRecords:
+        - 'enterpriseregistration.windows.net.'
+
+    LyncDiscoverRecord:
+      Type: AWS::Route53::RecordSet
+      Properties:
+        HostedZoneId: !Ref ZoneId
+        Name: !Join [ ., [ 'lyncdiscover', !Ref DomainName]] 
+        Type: CNAME
+        TTL: '300'
+        ResourceRecords:
+        - 'webdir.online.lync.com.'
+
+    MsoidRecord:
+      Type: AWS::Route53::RecordSet
+      Properties:
+        HostedZoneId: !Ref ZoneId
+        Name: !Join [ ., [ 'msoid', !Ref DomainName]] 
+        Type: CNAME
+        TTL: '300'
+        ResourceRecords:
+        - 'clientconfig.microsoftonline-p.net.'
+
+    SIPRecord:
+      Type: AWS::Route53::RecordSet
+      Properties:
+        HostedZoneId: !Ref ZoneId
+        Name: !Join [ ., [ 'sip', !Ref DomainName]] 
+        Type: CNAME
+        TTL: '300'
+        ResourceRecords:
+        - 'sipdir.online.lync.com.'
+
+    SPFRecord:
+      Type: AWS::Route53::RecordSet
+      Properties:
+        HostedZoneId: !Ref ZoneId
+        Name: !Ref DomainName
+        Type: TXT
+        TTL: '300'
+        ResourceRecords:
+        - '"v=spf1 include:spf.protection.outlook.com -all"'
